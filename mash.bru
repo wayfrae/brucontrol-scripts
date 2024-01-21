@@ -1,0 +1,152 @@
+[start]
+new string Status
+new value CurrentStepTemp
+"Strike Status" visibility = hidden
+"Boil Status" visibility = hidden
+"Mash Status" visibility = visible
+"Mash Count" value = 1
+"Mash Timer" value = "Mash Length 1" value
+start "Mash Timer"
+"RIMS PID" target = "Mash Temp 1" value
+"RIMS PID" MaxOutput = 25
+"RIMS PID" InputPortId = "Mash Temp" ID
+"Mash Flow Valve" value = 27
+"Mash Pump" state = on
+sleep 3000
+goto mash
+
+
+[mash]
+if "Mash Temp" value >= CurrentStepTemp
+	start "Mash Timer"
+endif
+
+if "Mash Timer" value <= 00:00:00
+	"Mash Count" value += 1
+	if "Mash Count" value == 2
+		if "Mash Temp 2" value > 0
+			CurrentStepTemp = "Mash Temp 2" value
+			"RIMS PID" target = "Mash Temp 2" value
+			Status = "Ramping to Mash Temp 2..."
+			stop "Mash Timer"
+			"Mash Timer" value = "Mash Length 2" value
+			goto mash
+		endif
+	endif
+
+	if "Mash Count" value == 3
+		if "Mash Temp 3" value > 0
+			CurrentStepTemp = "Mash Temp 3" value
+			"RIMS PID" target = "Mash Temp 3" value
+			Status = "Ramping to Mash Temp 3..."
+			stop "Mash Timer"
+			"Mash Timer" value = "Mash Length 3" value
+			goto mash
+		endif
+	endif
+
+	if "Mash Count" value == 4
+		if "Mash Temp 4" value > 0
+			CurrentStepTemp = "Mash Temp 4" value
+			"RIMS PID" target = "Mash Temp 4" value
+			Status = "Ramping to Mash Temp 4..."
+			stop "Mash Timer"
+			"Mash Timer" value = "Mash Length 4" value
+			goto mash
+		endif
+	endif
+
+	if "Mash Count" value == 5
+		if "Mash Temp 5" value > 0
+			CurrentStepTemp = "Mash Temp 5" value
+			"RIMS PID" target = "Mash Temp 5" value
+			Status = "Ramping to Mash Temp 5..."
+			stop "Mash Timer"
+			"Mash Timer" value = "Mash Length 5" value
+			goto mash
+		endif
+	endif
+
+	if "Mash Count" value == 6
+		if "Mash Temp 6" value > 0
+			CurrentStepTemp = "Mash Temp 6" value
+			"RIMS PID" target = "Mash Temp 6" value
+			Status = "Ramping to Mash Temp 6..."
+			stop "Mash Timer"
+			"Mash Timer" value = "Mash Length 6" value
+			goto mash
+		endif
+	endif
+
+	"Alarm" active = true
+	Status = "Mash Complete. Prepare sparge."
+	"RIMS PID" enabled = false
+	"Mash Pump" state = off
+	wait "Continue Button" active == true
+	"Alarm" active = false
+	goto kettle-transfer
+endif
+
+if "RIMS Temp" value > 160
+	Status = "RIMS temp exceeded 160°"
+	"RIMS PID" enabled = false
+	"Alarm" active = true
+    wait "Alarm" active == false
+endif
+
+if "RIMS Flow" rate < 0.5
+	Status = "RIMS Flow is less than 0.5!"
+	"Alarm" active = true
+	"RIMS PID" enabled = false
+	wait "Alarm" active == false
+else
+	if "RIMS PID" enabled != true
+		"RIMS PID" enabled = true
+	endif
+endif
+
+sleep 1000
+goto mash
+
+[kettle-transfer]
+// open whirlpool valve
+"Mash Valve" state = on
+"Mash Flow Valve" value = 65
+"Mash Pump" state = on
+Status = "Transferring to kettle... Click continue when complete."
+wait "Continue Button" active == true
+start "boil"
+stop "mash"
+// sparge
+// wait for boil volume
+
+
+[sparge]
+"RIMS PID" target = "Sparge Temp" value
+"RIMS PID" MaxOutput = 100
+"RIMS PID" InputPortId = "RIMS Temp" ID
+"RIMS Flow Valve" value = 18
+goto sparge-loop
+
+
+[sparge-loop]
+if "RIMS Temp" value > 175
+	Status = "RIMS temp exceeded 175°"
+	"RIMS PID" enabled = false
+	"Alarm" active = true
+    wait "Alarm" active == false
+endif
+
+if "RIMS Flow" rate < 0.3
+	Status = "RIMS Flow is less than 0.5!"
+	"Alarm" active = true
+	"RIMS PID" enabled = false
+	wait "Alarm" active == false
+else
+	if "RIMS PID" enabled != true
+		"RIMS PID" enabled = true
+	endif
+endif
+
+sleep 1000
+goto sparge-loop

@@ -1,0 +1,80 @@
+[start]
+new value StrikeTemp
+new value StrikeVolume
+new string Status
+StrikeTemp = "Strike Water Temp" value 
+StrikeVolume = "Strike Water Volume" value
+"Strike Status" visibility = visible
+"Boil Status" visibility = hidden
+"Mash Status" visibility = hidden
+goto strike
+
+[strike]
+"Continue Button" DisplayName = "Start"
+wait "Continue Button" state == true
+"Continue Button" state = false
+"Continue Button" DisplayName = "Continue"
+Status = "Heating strike water"
+"RIMS Flow" enabled = true
+"Mash Flow Valve" enabled = true
+"Mash Flow Valve" value = 18
+"Mash Pump" state = on
+sleep 3000
+goto strike_loop
+
+[change-inlet]
+"Mash Pump" state = off
+if "Mash Temp" value >= StrikeTemp	
+	Status = "Waiting to dough in..."
+    "Alarm" active = true
+    wait "Continue Button" state == true
+	"Alarm" active = false
+	start "mash"
+else
+	Status = "Strike temp too low, change pump inlet for recirculation..."
+	"Alarm" active = true
+	wait "Contiue Button" active == true
+	"Alarm" active = false
+	"Mash Pump" state = on
+    "Mash Valve" state = on
+    "Mash Flow Valve" value = 100
+	goto strike_loop
+endif
+
+[strike_loop]
+if "RIMS Temp" value > 175
+	Status = "RIMS temp exceeded 175°"
+	"Mash Flow Valve" value += 1
+	"Alarm" active = true
+    wait "Continue Button" state == true
+	"Alarm" active = false
+else
+	if "RIMS Flow" rate >= 0.5
+       if "RIMS PID" enabled != true
+		    "RIMS PID" target = StrikeTemp + 3
+		    "RIMS PID" enabled = true
+       endif
+	endif
+endif
+
+if "Mash Temp" value >= StrikeTemp + 0.5
+    goto change-inlet
+else 
+	Status = "Waiting for strike temp..."
+	sleep 1000
+	goto strike_loop
+endif
+
+if "Mash Volume" value < "Strike Water Volume" value + 0.25
+	Status = "Waiting for mash tun to fill..."  
+	sleep 1000
+    goto strike_loop
+else
+    goto change-inlet
+endif
+
+
+
+
+
+	
