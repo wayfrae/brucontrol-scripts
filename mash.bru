@@ -82,7 +82,8 @@ if "Mash Timer" value <= 00:00:00
 	Status = "Mash Complete. Prepare sparge."
 	"RIMS PID" enabled = false
 	"Mash Pump" state = off
-	wait "Continue Button" active == true
+	wait "Continue Button" state == true
+	"Continue Button" state = false
 	"Alarm" active = false
 	goto kettle-transfer
 endif
@@ -114,7 +115,8 @@ goto mash
 "Mash Flow Valve" value = 65
 "Mash Pump" state = on
 Status = "Transferring to kettle... Click continue when complete."
-wait "Continue Button" active == true
+wait "Continue Button" state == true
+"Continue Button" state = false
 start "boil"
 stop "mash"
 // sparge
