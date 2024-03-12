@@ -9,13 +9,13 @@ Status = "Ensure wort is covering element. Press continue when ready."
 wait "Continue Button" state == true
 "Continue Button" state = false
 Status = "Waiting for boil"
-"Boil Duty" value = 100
-wait "Boil Temp" value >= 204
-"Boil Duty" value = 35
+"Boil Duty" DutyCycle = 100
+wait "Boil Temp" value >= 202
+"Boil Duty" DutyCycle = 25
 "Boil Timer" value = 00:05:00
 start "Boil Timer"
 wait "Boil Timer" value <= 00:00:00
-"Boil Duty" value = 50
+"Boil Duty" DutyCycle = 30
 "Boil Timer" value = "Boil Time" value
 "Hops Count" value = 1
 goto boil-loop
@@ -31,6 +31,7 @@ if "Boil Timer" value <= 00:15:00
         IsChillerAdded = true
         "Boil Valve" state = on
         "Boil Pump" state = on
+    endif
 endif
 if "Hops Count" value == 1
     if "Hops Whirlpool 1" value == 0
@@ -47,7 +48,7 @@ if "Hops Count" value == 1
 endif
 if "Hops Count" value == 2
     if "Hops Whirlpool 2" value == 0
-        Status = "Prepare " + "Hops Amount 2" value + "oz. of " + "Hops Name 2" value + "for addition at " + "Hops Time 2" value
+        Status = "Prepare " + "Hops Name 2"
         wait "Boil Timer" value == "Hops Time 2" value
         Status = "Add " + "Hops Amount 2" value + "oz. of " + "Hops Name 2" value
         "Alarm" active = true
@@ -245,10 +246,3 @@ else
     "Alarm" visibility = hidden
     stop "boil"
 endif
-
-
-
-
-
-
-

@@ -2,6 +2,15 @@
 new value StrikeTemp
 new value StrikeVolume
 new string Status
+reset "Mash Timer"
+stop "Mash Timer"
+reset "Boil Timer"
+stop "Boil Timer"
+"Continue Button" state = false
+"RIMS PID" enabled = false
+"RIMS PID" MaxOutput = 100
+"RIMS PID" InputPortId = "RIMS Temp" Id
+"RIMS PID" target = "Strike Water Temp" value
 StrikeTemp = "Strike Water Temp" value 
 StrikeVolume = "Strike Water Volume" value
 "Strike Status" visibility = visible
@@ -16,8 +25,9 @@ wait "Continue Button" state == true
 "Continue Button" DisplayName = "Continue"
 Status = "Heating strike water"
 "RIMS Flow" enabled = true
+"Mash Valve" state = on
 "Mash Flow Valve" enabled = true
-"Mash Flow Valve" value = 18
+"Mash Flow Valve" value = 30
 "Mash Pump" state = on
 sleep 3000
 goto strike_loop
@@ -26,12 +36,15 @@ goto strike_loop
 "Mash Pump" state = off
 if "Mash Temp" value >= StrikeTemp	
 	Status = "Waiting to dough in..."
+	"RIMS PID" enabled = false
+	"Mash Valve" state = off
+	"Mash Pump" state = off
     "Alarm" active = true
     wait "Continue Button" state == true
 	"Continue Button" state = false
 	"Alarm" active = false
-	start "mash"
-	stop "strike"
+	start "Mash"
+	stop "Strike"
 else
 	Status = "Strike temp too low, change pump inlet for recirculation..."
 	"Alarm" active = true
@@ -61,24 +74,18 @@ else
 	endif
 endif
 
-if "Mash Temp" value >= StrikeTemp + 0.5
-    goto change-inlet
-else 
-	Status = "Waiting for strike temp..."
-	sleep 1000
-	goto strike_loop
-endif
-
 if "Mash Volume" value < "Strike Water Volume" value + 0.25
 	Status = "Waiting for mash tun to fill..."  
 	sleep 1000
     goto strike_loop
 else
+       if "Mash Temp" value >= StrikeTemp + 0.5
     goto change-inlet
+else 
+	Status = "Waiting for strike temp..."
+	"RIMS PID" InputPortId = "Mash Temp" ID
+	"Mash Flow Valve" value = 100
+	sleep 1000
+	goto strike_loop
 endif
-
-
-
-
-
-	
+endif

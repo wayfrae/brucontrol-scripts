@@ -22,7 +22,7 @@ if "Mash Temp" value >= CurrentStepTemp
 endif
 
 if "Mash Timer" value <= 00:00:00
-	"Mash Count" value += 1
+	"Mash Count" value = "Mash Count" value + 1
 	if "Mash Count" value == 2
 		if "Mash Temp 2" value > 0
 			CurrentStepTemp = "Mash Temp 2" value
@@ -82,14 +82,15 @@ if "Mash Timer" value <= 00:00:00
 	Status = "Mash Complete. Prepare sparge."
 	"RIMS PID" enabled = false
 	"Mash Pump" state = off
+	"Mash Valve" state = off
 	wait "Continue Button" state == true
 	"Continue Button" state = false
 	"Alarm" active = false
 	goto kettle-transfer
 endif
 
-if "RIMS Temp" value > 160
-	Status = "RIMS temp exceeded 160°"
+if "RIMS Temp" value > 175
+	Status = "RIMS temp exceeded 175°"
 	"RIMS PID" enabled = false
 	"Alarm" active = true
     wait "Alarm" active == false
@@ -117,8 +118,8 @@ goto mash
 Status = "Transferring to kettle... Click continue when complete."
 wait "Continue Button" state == true
 "Continue Button" state = false
-start "boil"
-stop "mash"
+start "Boil"
+stop "Mash"
 // sparge
 // wait for boil volume
 
