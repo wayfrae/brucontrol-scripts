@@ -5,12 +5,15 @@ IsChillerAdded = "false"
 "Strike Status" visibility = hidden
 "Boil Status" visibility = visible
 "Mash Status" visibility = hidden
+stop "Boil Timer"
+reset "Boil Timer"
 Status = "Ensure wort is covering element. Press continue when ready."
 wait "Continue Button" state == true
 "Continue Button" state = false
 Status = "Waiting for boil"
+"Boil Duty" Enabled = true
 "Boil Duty" DutyCycle = 100
-wait "Boil Temp" value >= 202
+//wait "Boil Temp" value >= 191
 "Boil Duty" DutyCycle = 25
 "Boil Timer" value = 00:05:00
 start "Boil Timer"
@@ -35,12 +38,20 @@ if "Boil Timer" value <= 00:15:00
 endif
 if "Hops Count" value == 1
     if "Hops Whirlpool 1" value == 0
-        Status = "Prepare " + "Hops Amount 1" value + "oz. of " + "Hops Name 1" value + "for addition at " + "Hops Time 1" value
-        wait "Boil Timer" value == "Hops Time 1" value
-        Status = "Add " + "Hops Amount 1" value + "oz. of " + "Hops Name 1" value
+        Status = "Prepare " + "Hops Amount 1" value 
+	 Status = Status + "oz. of "
+        Status = Status + "Hops Name 1" value
+        Status = Status + " for addition at "
+        Status = Status + "Hops Time 1" value
+        wait "Boil Timer" value <= "Hops Time 1" value
+	 Status = "Add " + "Hops Amount 1" value
+        Status = Status + "oz. of "
+        Status = Status + "Hops Name 1" value
         "Alarm" active = true
+        wait "Continue Button" state == true
+        "Continue Button" state = false
         "Alarm" visibility = visible
-        wait "Alarm" active == false
+        "Alarm" active = false
         "Hops Count" value = 2
         "Alarm" visibility = hidden
         goto boil-loop
@@ -48,67 +59,117 @@ if "Hops Count" value == 1
 endif
 if "Hops Count" value == 2
     if "Hops Whirlpool 2" value == 0
-        Status = "Prepare " + "Hops Name 2"
-        wait "Boil Timer" value == "Hops Time 2" value
-        Status = "Add " + "Hops Amount 2" value + "oz. of " + "Hops Name 2" value
-        "Alarm" active = true
-        "Alarm" visibility = visible
-        wait "Alarm" active == false
-        "Hops Count" value = 3
-        "Alarm" visibility = hidden
-        goto boil-loop
+	    if "Hops Amount 2" value > 0
+            Status = "Prepare " + "Hops Amount 2" value 
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 2" value
+            Status = Status + " for addition at "
+            Status = Status + "Hops Time 2" value
+            wait "Boil Timer" value <= "Hops Time 2" value
+            Status = "Add " + "Hops Amount 2" value
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 2" value
+            "Alarm" active = true
+            wait "Continue Button" state == true
+            "Continue Button" state = false
+            "Alarm" visibility = visible
+            "Alarm" active = false
+            "Hops Count" value = 3
+            "Alarm" visibility = hidden
+            goto boil-loop
+        endif
     endif
 endif
 if "Hops Count" value == 3
     if "Hops Whirlpool 3" value == 0
-        Status = "Prepare " + "Hops Amount 3" value + "oz. of " + "Hops Name 3" value + "for addition at " + "Hops Time 3" value
-        wait "Boil Timer" value == "Hops Time 3" value
-        Status = "Add " + "Hops Amount 3" value + "oz. of " + "Hops Name 3" value
-        "Alarm" active = true
-        "Alarm" visibility = visible
-        wait "Alarm" active == false
-        "Hops Count" value = 4
-        "Alarm" visibility = hidden
-        goto boil-loop
+        if "Hops Amount 3" value > 0
+            Status = "Prepare " + "Hops Amount 3" value 
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 3" value
+            Status = Status + " for addition at "
+            Status = Status + "Hops Time 3" value
+            wait "Boil Timer" value <= "Hops Time 3" value
+            Status = "Add " + "Hops Amount 3" value
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 3" value
+            "Alarm" active = true
+            wait "Continue Button" state == true
+            "Continue Button" state = false
+            "Alarm" visibility = visible
+            "Alarm" active = false
+            "Hops Count" value = 4
+            "Alarm" visibility = hidden
+            goto boil-loop
+        endif
     endif
 endif
 if "Hops Count" value == 4
     if "Hops Whirlpool 4" value == 0
-        Status = "Prepare " + "Hops Amount 4" value + "oz. of " + "Hops Name 4" value + "for addition at " + "Hops Time 4" value
-        wait "Boil Timer" value == "Hops Time 4" value
-        Status = "Add " + "Hops Amount 4" value + "oz. of " + "Hops Name 4" value
-        "Alarm" active = true
-        "Alarm" visibility = visible
-        wait "Alarm" active == false
-        "Hops Count" value = 5
-        "Alarm" visibility = hidden
-        goto boil-loop
+        if "Hops Amount 4" value > 0
+            Status = "Prepare " + "Hops Amount 4" value 
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 4" value
+            Status = Status + " for addition at "
+            Status = Status + "Hops Time 4" value
+            wait "Boil Timer" value <= "Hops Time 4" value
+            Status = "Add " + "Hops Amount 4" value
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 4" value
+            "Alarm" active = true
+            wait "Continue Button" state == true
+            "Continue Button" state = false
+            "Alarm" visibility = visible
+            "Alarm" active = false
+            "Hops Count" value = 5
+            "Alarm" visibility = hidden
+            goto boil-loop
+        endif
     endif
 endif
 if "Hops Count" value == 5
     if "Hops Whirlpool 5" value == 0
-        Status = "Prepare " + "Hops Amount 5" value + "oz. of " + "Hops Name 5" value + "for addition at " + "Hops Time 5" value
-        wait "Boil Timer" value == "Hops Time 5" value
-        Status = "Add " + "Hops Amount 5" value + "oz. of " + "Hops Name 5" value
-        "Alarm" active = true
-        "Alarm" visibility = visible
-        wait "Alarm" active == false
-        "Hops Count" value = 6
-        "Alarm" visibility = hidden
-        goto boil-loop
+        if "Hops Amount 5" value > 0
+            Status = "Prepare " + "Hops Amount 5" value 
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 5" value
+            Status = Status + " for addition at "
+            Status = Status + "Hops Time 5" value
+            wait "Boil Timer" value <= "Hops Time 5" value
+            Status = "Add " + "Hops Amount 5" value
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 5" value
+            "Alarm" active = true
+            wait "Continue Button" state == true
+            "Continue Button" state = false
+            "Alarm" visibility = visible
+            "Alarm" active = false
+            "Hops Count" value = 6
+            "Alarm" visibility = hidden
+            goto boil-loop
+        endif
     endif
 endif
 if "Hops Count" value == 6
     if "Hops Whirlpool 6" value == 0
-        Status = "Prepare " + "Hops Amount 6" value + "oz. of " + "Hops Name 6" value + "for addition at " + "Hops Time 6" value
-        wait "Boil Timer" value == "Hops Time 6" value
-        Status = "Add " + "Hops Amount 6" value + "oz. of " + "Hops Name 6" value
-        "Alarm" active = true
-        "Alarm" visibility = visible
-        wait "Alarm" active == false
-        "Hops Count" value = 7
-        "Alarm" visibility = hidden
-        goto boil-loop
+        if "Hops Amount 6" value > 0
+            Status = "Prepare " + "Hops Amount 6" value 
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 6" value
+            Status = Status + " for addition at "
+            Status = Status + "Hops Time 6" value
+            wait "Boil Timer" value <= "Hops Time 6" value
+            Status = "Add " + "Hops Amount 6" value
+            Status = Status + "oz. of "
+            Status = Status + "Hops Name 6" value
+            "Alarm" active = true
+            wait "Continue Button" state == true
+            "Continue Button" state = false
+            "Alarm" visibility = visible
+            "Alarm" active = false
+            "Hops Count" value = 7
+            "Alarm" visibility = hidden
+            goto boil-loop
+        endif
     endif
 endif
 sleep 1000
@@ -122,55 +183,98 @@ wait "Continue Button" state == true
 
 Status = "Prepare "
 if "Hops Whirlpool 1" value > 0
-    Status = Status + "Hops Amount 1" value + "oz. of " + "Hops Name 1" value + " for addition at " + "Hops Whirlpool 1" value + "for " + "Hops Time 1" value
+    Status = Status + "Hops Amount 1" value 
+    Status = Status + " oz. of "
+    Status = Status + "Hops Name 1" value
+    Status = Status + " for addition at " 
+    Status = Status + "Hops Whirlpool 1" value 
+    Status = Status + "for " 
+    Status = Status + "Hops Time 1" value
     wait "Continue Button" state == true
     "Continue Button" state = false
 endif
 if "Hops Whirlpool 2" value > 0
-    Status = Status + "Hops Amount 2" value + "oz. of " + "Hops Name 2" value + " for addition at " + "Hops Whirlpool 2" value + "for " + "Hops Time 2" value
+    Status = Status + "Hops Amount 2" value 
+    Status = Status + " oz. of "
+    Status = Status + "Hops Name 2" value
+    Status = Status + " for addition at " 
+    Status = Status + "Hops Whirlpool 2" value 
+    Status = Status + "for " 
+    Status = Status + "Hops Time 2" value
     wait "Continue Button" state == true
     "Continue Button" state = false
 endif
 if "Hops Whirlpool 3" value > 0
-    Status = Status + "Hops Amount 3" value + "oz. of " + "Hops Name 3" value + " for addition at " + "Hops Whirlpool 3" value + "for " + "Hops Time 3" value
+    Status = Status + "Hops Amount 3" value 
+    Status = Status + " oz. of "
+    Status = Status + "Hops Name 3" value
+    Status = Status + " for addition at " 
+    Status = Status + "Hops Whirlpool 3" value 
+    Status = Status + "for " 
+    Status = Status + "Hops Time 3" value
     wait "Continue Button" state == true
     "Continue Button" state = false
 endif
 if "Hops Whirlpool 4" value > 0
-    Status = Status + "Hops Amount 4" value + "oz. of " + "Hops Name 4" value + " for addition at " + "Hops Whirlpool 4" value + "for " + "Hops Time 4" value
+    Status = Status + "Hops Amount 4" value 
+    Status = Status + " oz. of "
+    Status = Status + "Hops Name 4" value
+    Status = Status + " for addition at " 
+    Status = Status + "Hops Whirlpool 4" value 
+    Status = Status + "for " 
+    Status = Status + "Hops Time 4" value
     wait "Continue Button" state == true
     "Continue Button" state = false
 endif
 if "Hops Whirlpool 5" value > 0
-    Status = Status + "Hops Amount 5" value + "oz. of " + "Hops Name 5" value + " for addition at " + "Hops Whirlpool 5" value + "for " + "Hops Time 5" value
+    Status = Status + "Hops Amount 5" value 
+    Status = Status + " oz. of "
+    Status = Status + "Hops Name 5" value
+    Status = Status + " for addition at " 
+    Status = Status + "Hops Whirlpool 5" value 
+    Status = Status + "for " 
+    Status = Status + "Hops Time 5" value
     wait "Continue Button" state == true
     "Continue Button" state = false
 endif
 if "Hops Whirlpool 6" value > 0
-    Status = Status + "Hops Amount 6" value + "oz. of " + "Hops Name 6" value + " for addition at " + "Hops Whirlpool 6" value + "for " + "Hops Time 6" value
+    Status = Status + "Hops Amount 6" value 
+    Status = Status + " oz. of "
+    Status = Status + "Hops Name 6" value
+    Status = Status + " for addition at " 
+    Status = Status + "Hops Whirlpool 6" value 
+    Status = Status + "for " 
+    Status = Status + "Hops Time 6" value
     wait "Continue Button" state == true
     "Continue Button" state = false
 endif
 goto whirlpool-loop
 
 [whirlpool-loop]
-
 if "Hops Count" value == 1
     if "Hops Whirlpool 1" value > 0
-        Status = "Add " + "Hops Amount 1" value + "oz. of " + "Hops Name 1" value + "for addition at " + "Hops Whirlpool 1" value
+        Status = "Add " + "Hops Amount 1" value 
+        Status = Status + "oz. of " 
+        Status = Status + "Hops Name 1" value 
+        Status = Status + "for addition at " 
+        Status = Status + "Hops Whirlpool 1" value
         wait "Boil Temp" value <= "Hops Whirlpool 1" value
         if "Boil Timer" value < 00:00:00
             stop "Boil Timer"
             "Boil Timer" value = "Hops Time 1" value
         endif
         wait "Continue Button" state == true
-    "Continue Button" state = false
+        "Continue Button" state = false
         start "Boil Timer"
     endif
 endif
 if "Hops Count" value == 2
     if "Hops Whirlpool 2" value > 0
-        Status = "Add " + "Hops Amount 2" value + "oz. of " + "Hops Name 2" value + "for addition at " + "Hops Whirlpool 2" value
+        Status = "Add " + "Hops Amount 2" value
+        Status = Status + "oz. of "
+        Status = Status + "Hops Name 2" value
+        Status = Status + "for addition at "
+        Status = Status + "Hops Whirlpool 2" value
         wait "Boil Temp" value <= "Hops Whirlpool 2" value
         if "Boil Timer" value < 00:00:00
             stop "Boil Timer"
@@ -183,7 +287,11 @@ if "Hops Count" value == 2
 endif
 if "Hops Count" value == 3
     if "Hops Whirlpool 3" value > 0
-        Status = "Add " + "Hops Amount 3" value + "oz. of " + "Hops Name 3" value + "for addition at " + "Hops Whirlpool 3" value
+        Status = "Add " + "Hops Amount 3" value
+        Status = Status + "oz. of "
+        Status = Status + "Hops Name 3" value
+        Status = Status + "for addition at "
+        Status = Status + "Hops Whirlpool 3" value
         wait "Boil Temp" value <= "Hops Whirlpool 3" value
         if "Boil Timer" value < 00:00:00
             stop "Boil Timer"
@@ -196,7 +304,11 @@ if "Hops Count" value == 3
 endif
 if "Hops Count" value == 4
     if "Hops Whirlpool 4" value > 0
-        Status = "Add " + "Hops Amount 4" value + "oz. of " + "Hops Name 4" value + "for addition at " + "Hops Whirlpool 4" value
+        Status = "Add " + "Hops Amount 4" value
+        Status = Status + "oz. of "
+        Status = Status + "Hops Name 4" value
+        Status = Status + "for addition at "
+        Status = Status + "Hops Whirlpool 4" value
         wait "Boil Temp" value <= "Hops Whirlpool 4" value
         if "Boil Timer" value < 00:00:00
             stop "Boil Timer"
@@ -209,7 +321,11 @@ if "Hops Count" value == 4
 endif
 if "Hops Count" value == 5
     if "Hops Whirlpool 5" value > 0
-        Status = "Add " + "Hops Amount 5" value + "oz. of " + "Hops Name 5" value + "for addition at " + "Hops Whirlpool 5" value
+        Status = "Add " + "Hops Amount 5" value
+        Status = Status + "oz. of "
+        Status = Status + "Hops Name 5" value
+        Status = Status + "for addition at "
+        Status = Status + "Hops Whirlpool 5" value
         wait "Boil Temp" value <= "Hops Whirlpool 5" value
         if "Boil Timer" value < 00:00:00
             stop "Boil Timer"
@@ -222,7 +338,11 @@ if "Hops Count" value == 5
 endif
 if "Hops Count" value == 6
     if "Hops Whirlpool 6" value > 0
-        Status = "Add " + "Hops Amount 6" value + "oz. of " + "Hops Name 6" value + "for addition at " + "Hops Whirlpool 6" value
+        Status = "Add " + "Hops Amount 6" value
+        Status = Status + "oz. of "
+        Status = Status + "Hops Name 6" value
+        Status = Status + "for addition at "
+        Status = Status + "Hops Whirlpool 6" value
         wait "Boil Temp" value <= "Hops Whirlpool 6" value
         if "Boil Timer" value < 00:00:00
             stop "Boil Timer"
@@ -244,5 +364,7 @@ else
     "Continue Button" state = false
     "Alarm" active = false
     "Alarm" visibility = hidden
+    stop "Boil Timer"
+    reset "Boil Timer"
     stop "boil"
 endif

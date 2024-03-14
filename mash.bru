@@ -119,6 +119,8 @@ Status = "Transferring to kettle... Click continue when complete."
 wait "Continue Button" state == true
 "Continue Button" state = false
 start "Boil"
+reset "Mash Timer"
+stop "Mash Timer"
 stop "Mash"
 // sparge
 // wait for boil volume
@@ -140,12 +142,7 @@ if "RIMS Temp" value > 175
     wait "Alarm" active == false
 endif
 
-if "RIMS Flow" rate < 0.3
-	Status = "RIMS Flow is less than 0.5!"
-	"Alarm" active = true
-	"RIMS PID" enabled = false
-	wait "Alarm" active == false
-else
+if "RIMS Flow" rate > 0.3	
 	if "RIMS PID" enabled != true
 		"RIMS PID" enabled = true
 	endif
